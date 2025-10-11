@@ -12,16 +12,24 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史记录
 
       - name: Get commit messages
         id: commits
         run: |
-          echo "COMMITS<<EOF" >> $GITHUB_ENV
-          git log -1 --pretty=format:"%h - %an: %s" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          # 获取提交信息
+          COMMIT_INFO=$(git log -1 --pretty=format:"%h - %an: %s")
+          echo "COMMITS=$COMMIT_INFO" >> $GITHUB_ENV
           
+          # 获取文件变更统计（处理可能的浅克隆情况）
+          if git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+            CHANGES=$(git diff --stat HEAD~1 HEAD)
+          else
+            CHANGES=$(git diff --stat --cached)
+          fi
           echo "CHANGES<<EOF" >> $GITHUB_ENV
-          git diff --stat HEAD~1 HEAD >> $GITHUB_ENV
+          echo "$CHANGES" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
       - name: Send mail
