@@ -1,0 +1,37 @@
+name: Send Commit Email
+
+on:
+  push:
+    branches:
+      - main   # 监听 main 分支推送，你也可以改成其他分支
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Get commit messages
+        id: commits
+        run: |
+          echo "COMMITS<<EOF" >> $GITHUB_ENV
+          git log -1 --pretty=format:"%h - %an: %s" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "New commit pushed to ${{ github.repository }}"
+          body: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit info:
+            ${{ env.COMMITS }}
+          to: your_email@gmail.com
+          from: GitHub Actions <${{ secrets.GMAIL_USERNAME }}>
