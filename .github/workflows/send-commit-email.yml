@@ -19,6 +19,10 @@ jobs:
           echo "COMMITS<<EOF" >> $GITHUB_ENV
           git log -1 --pretty=format:"%h - %an: %s" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          
+          echo "CHANGES<<EOF" >> $GITHUB_ENV
+          git diff --stat HEAD~1 HEAD >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Send mail
         uses: dawidd6/action-send-mail@v3
@@ -29,9 +33,19 @@ jobs:
           password: ${{ secrets.GMAIL_APP_PASSWORD }}
           subject: "New commit pushed to ${{ github.repository }}"
           body: |
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit info:
+            📧 GitHub Actions 通知
+            
+            📁 Repository: ${{ github.repository }}
+            🌿 Branch: ${{ github.ref_name }}
+            👤 Author: ${{ github.actor }}
+            🕐 Time: ${{ github.event.head_commit.timestamp }}
+            
+            📝 Commit Info:
             ${{ env.COMMITS }}
-          to: your_email@gmail.com
+            
+            📊 File Changes:
+            ${{ env.CHANGES }}
+            
+            🔗 View on GitHub: ${{ github.event.head_commit.url }}
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
           from: GitHub Actions <${{ secrets.GMAIL_USERNAME }}>
