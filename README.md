@@ -2,7 +2,7 @@
 permalink: /
 ---
 
-# 欢迎来到 鱼皮的 AI 知识库！
+# 欢迎来到 鱼皮的 AI 知识库！aaa
 
 这是一个完全免费开放的知识共享平台，从 Deepseek 开始，汇总整合目前热门的 AI 工具相关信息，包括产品介绍、使用指南、技巧分享、应用场景、AI 变现、行业资讯、教程资源等一系列内容。涉及的大模型：chatGPT、Deepseek、Deepseek-r1、QWEN、GROK 等等
 
